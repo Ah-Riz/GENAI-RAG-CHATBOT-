@@ -12,3 +12,6 @@ def ingest_pdfs():
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
     vector_store = FAISS.from_documents(chunks, embeddings)
     vector_store.save_local("data/vector_store/uk_nhs_index")
+
+if __name__ == "__main__":
+    ingest_pdfs()
