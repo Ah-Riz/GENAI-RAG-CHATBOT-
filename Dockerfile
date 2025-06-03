@@ -7,16 +7,24 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements
+# Copy requirements and install dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
-COPY backend/ ./backend/
-COPY frontend/ ./frontend/
-COPY data/ ./data/
+COPY . .
 
-# Expose ports for FastAPI and Streamlit
+# Create cache directories
+RUN mkdir -p /tmp/.cache /tmp/.streamlit /app/data/vector_store
+
+# Set environment variables
+ENV PYTHONPATH=/app
+ENV HF_HOME=/tmp/.cache/huggingface
+ENV TRANSFORMERS_CACHE=/tmp/.cache/transformers
+ENV STREAMLIT_CONFIG_DIR=/tmp/.streamlit
+ENV STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
+
 EXPOSE 8000 8501
 
-CMD ["sh", "-c", "uvicorn backend.app:app --host 0.0.0.0 --port 8000 & streamlit run frontend/app.py --server.port 8501 --server.address 0.0.0.0"]
+# Run the main app
+CMD ["python", "app.py"]

@@ -6,9 +6,10 @@ import requests
 load_dotenv()
 
 BACKEND_URL = os.getenv("BACKEND_URL")
+DOCUMEN_URL = "https://www.longtermplan.nhs.uk/wp-content/uploads/2019/08/nhs-long-term-plan-version-1.2.pdf"
 
 st.title("UK NHS Longterm Plan RAG Chatbot")
-st.caption("Using Mistral-7B and UK NHS 2019 documents")
+st.caption("Using Mistral-7B and UK NHS 2019 [documents](%s)" % DOCUMEN_URL)
 
 if "messages" not in st.session_state:
     st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
