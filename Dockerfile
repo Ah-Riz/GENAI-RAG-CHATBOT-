@@ -15,9 +15,13 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY backend/ ./backend/
 COPY frontend/ ./frontend/
 COPY data/ ./data/
+COPY start.sh .
+
+# Make script executable
+RUN chmod +x start.sh
 
 # Expose ports for FastAPI and Streamlit
 EXPOSE 8000 8501
 
 # Run the ingestion script first, then start the backend
-CMD ["sh", "-c", "uvicorn backend.app:app --reload", "Streamlit run frontend/app.py --server.port 8501"]
+CMD ["./start.sh"]
