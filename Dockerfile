@@ -28,3 +28,6 @@ EXPOSE 8000 8501
 
 # Run the main app
 CMD ["python", "app.py"]
+
+
+CMD ["curl", "-I", "http://localhost:8000/health"]

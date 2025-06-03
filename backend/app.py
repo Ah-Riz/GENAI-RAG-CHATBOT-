@@ -107,10 +107,6 @@ async def health_check():
     except Exception as e:
         return {"status": "error", "message": str(e)}
     
-@app.get("/env-test")
-async def env_test():
-    return {
-        "HF_TOKEN": "***" if os.getenv("HF_TOKEN") else "Not set",
-        "SENTENCE_TRANSFORMERS": os.getenv("SENTENCE_TRANSFORMERS"),
-        "BACKEND_URL": os.getenv("BACKEND_URL")
-    }
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="localhost", port=8000)
