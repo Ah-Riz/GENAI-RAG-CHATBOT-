@@ -173,18 +173,18 @@ if prompt := st.chat_input("Ask about UK NHS policies..."):
                 st.session_state["messages"].append({"role": "assistant", "content": error_msg})
 
 # Sidebar with info
-with st.sidebar:
-    st.header("ℹ️ About")
-    st.write("This chatbot uses RAG (Retrieval-Augmented Generation) to answer questions about UK NHS policies.")
+# with st.sidebar:
+#     st.header("ℹ️ About")
+#     st.write("This chatbot uses RAG (Retrieval-Augmented Generation) to answer questions about UK NHS policies.")
     
-    st.header("🔧 Backend Status")
-    if st.button("🔄 Refresh Status"):
-        st.rerun()
+#     st.header("🔧 Backend Status")
+#     if st.button("🔄 Refresh Status"):
+#         st.rerun()
     
-    is_healthy, status = check_backend_health()
-    if is_healthy:
-        st.success("✅ Backend: Healthy")
-        st.info(f"📚 Documents: {status.get('documents_loaded', 0)}")
-    else:
-        st.error("❌ Backend: Unhealthy")
-        st.error(status.get('error', 'Unknown error'))
+#     is_healthy, status = check_backend_health()
+#     if is_healthy:
+#         st.success("✅ Backend: Healthy")
+#         st.info(f"📚 Documents: {status.get('documents_loaded', 0)}")
+#     else:
+#         st.error("❌ Backend: Unhealthy")
+#         st.error(status.get('error', 'Unknown error'))
