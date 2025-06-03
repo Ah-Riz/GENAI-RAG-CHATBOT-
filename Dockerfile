@@ -17,7 +17,6 @@ RUN apt-get update && apt-get install -y \
 # Copy requirements and install dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-# RUN pip uninstall hf_xet
 RUN pip install accelerate
 
 # Copy application code

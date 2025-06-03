@@ -6,7 +6,8 @@ from pydantic import BaseModel
 import requests
 import json
 import traceback
-
+from dotenv import load_dotenv
+load_dotenv()
 
 class RAGSystem:
     def __init__(self):
@@ -105,7 +106,7 @@ async def health_check():
         return {"status": "ok"}
     except Exception as e:
         return {"status": "error", "message": str(e)}
-    
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="localhost", port=8000)
