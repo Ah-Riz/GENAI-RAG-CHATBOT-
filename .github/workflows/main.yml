@@ -16,4 +16,4 @@ jobs:
       - name: Push to hub
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: git push https://ah-riz:$HF_TOKEN@huggingface.co/spaces/ah-riz/RAG_CHATBOT_UK_NHS
+        run: git push https://Ah-Riz:$HF_TOKEN@huggingface.co/spaces/Ah-Riz/RAG_Chatbot_UK_NHS main
