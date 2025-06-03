@@ -15,14 +15,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY backend/ ./backend/
 COPY frontend/ ./frontend/
 COPY data/ ./data/
-COPY start.sh .
-
-# Make script executable
-# RUN dos2unix start.sh && chmod +x start.sh
 
 # Expose ports for FastAPI and Streamlit
 EXPOSE 8000 8501
 
-# Run the ingestion script first, then start the backend
-# CMD ["./start.sh"]
 CMD ["sh", "-c", "uvicorn backend.app:app --host 0.0.0.0 --port 8000 & streamlit run frontend/app.py --server.port 8501 --server.address 0.0.0.0"]
