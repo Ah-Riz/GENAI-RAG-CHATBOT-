@@ -11,13 +11,12 @@ import traceback
 class RAGSystem:
     def __init__(self):
         model_name = os.getenv("SENTENCE_TRANSFORMERS")
-        self.model = SentenceTransformer(model_name)
+        self.model = SentenceTransformer(model_name, cache_folder="app/cache", device="cpu")
         
         with open("data/vector_store/uk_nhs_index.json", "r") as f:
             data = json.load(f)
             self.vector_store = np.array(data["vectors"])
             self.metadata = data["metadata"]
-            
     def find_similar(self, query, k=2):
         score = np.dot(self.vector_store, query)
         top_indices = np.argsort(score)[-k:][::-1]

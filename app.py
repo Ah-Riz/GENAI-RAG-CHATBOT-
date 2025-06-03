@@ -18,19 +18,18 @@ def main():
     backend = subprocess.Popen([
         sys.executable, "-m", "uvicorn", 
         "backend.app:app", 
-        "--host", "0.0.0.0", 
+        "--host", "localhost", 
         "--port", "8000"
     ])
     
     # Wait for backend to start
-    time.sleep(10)
+    time.sleep(30)
     
     # Start frontend
     subprocess.run([
         sys.executable, "-m", "streamlit", "run", 
         "frontend/app.py", 
-        "--server.port", "8501", 
-        "--server.address", "0.0.0.0"
+        "--server.port", "8501"
     ])
 
 if __name__ == "__main__":
