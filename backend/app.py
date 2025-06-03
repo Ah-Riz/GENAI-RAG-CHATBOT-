@@ -5,6 +5,7 @@ from sentence_transformers import SentenceTransformer
 from pydantic import BaseModel
 import requests
 import json
+import traceback
 
 
 class RAGSystem:
@@ -17,7 +18,7 @@ class RAGSystem:
             self.vector_store = np.array(data["vectors"])
             self.metadata = data["metadata"]
             
-    def find_similar(self, query, k=5):
+    def find_similar(self, query, k=2):
         score = np.dot(self.vector_store, query)
         top_indices = np.argsort(score)[-k:][::-1]
         return [self.metadata[i] for i in top_indices]
@@ -41,19 +42,14 @@ def query_hf(payload):
 
 def extract_answer(response):
     try:
-        print(f"Response type: {type(response)}")
-        print(f"Response content: {response}")
-        
         if not response:
             return "No response received from AI model"
         
-        # Handle string responses (sometimes HF returns raw strings)
         if isinstance(response, str):
             if "Answer:" in response:
                 return response.split("Answer:")[-1].strip()
             return response.strip()
         
-        # Handle dictionary responses
         if isinstance(response, dict):
             if "error" in response:
                 return f"AI model error: {response['error']}"
@@ -62,7 +58,6 @@ def extract_answer(response):
             else:
                 return "No generated text in response"
         
-        # Handle list responses
         elif isinstance(response, list) and len(response) > 0:
             first_item = response[0]
             if isinstance(first_item, dict) and "generated_text" in first_item:
@@ -80,7 +75,6 @@ def extract_answer(response):
         else:
             return generated_text.strip()
     except Exception as e:
-        print(f"Error in extract_answer_from_response: {e}")
         return f"Error processing response: {str(e)}"
 
 
@@ -103,7 +97,20 @@ async def ask(query: Query):
         answer = extract_answer(query_hf({"inputs": prompt, "parameters": {"max_new_tokens": 512}}))
         return {"answer": answer, "source": [{"source": doc["source"], "page": doc["page"]} for doc in similar_docs]}
     except Exception as e:
-        print(f"Error in ask endpoint: {e}")
-        import traceback
         traceback.print_exc()
         return {"error": f"Server error: {str(e)}", "source": []}
+
+@app.get("/health")
+async def health_check():
+    try:
+        return {"status": "ok"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+    
+@app.get("/env-test")
+async def env_test():
+    return {
+        "HF_TOKEN": "***" if os.getenv("HF_TOKEN") else "Not set",
+        "SENTENCE_TRANSFORMERS": os.getenv("SENTENCE_TRANSFORMERS"),
+        "BACKEND_URL": os.getenv("BACKEND_URL")
+    }
