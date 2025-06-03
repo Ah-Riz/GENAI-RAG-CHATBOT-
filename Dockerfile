@@ -18,7 +18,7 @@ COPY data/ ./data/
 COPY start.sh .
 
 # Make script executable
-RUN dos2unix start.sh && chmod +x start.sh
+# RUN dos2unix start.sh && chmod +x start.sh
 
 # Expose ports for FastAPI and Streamlit
 EXPOSE 8000 8501
