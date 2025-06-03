@@ -15,9 +15,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY . .
 
-# Create data directory (if not exists)
-RUN mkdir -p data/vector_store
-
 # Expose ports
 EXPOSE 8000 8501
 
