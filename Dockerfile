@@ -24,5 +24,7 @@ RUN dos2unix start.sh && chmod +x start.sh
 # Expose ports for FastAPI and Streamlit
 EXPOSE 8000 8501
 
+ENV PYTHONPATH=/app
+
 # Run the ingestion script first, then start the backend
 CMD ["./start.sh"]
