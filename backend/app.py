@@ -30,7 +30,7 @@ app = FastAPI()
 RAGSystem = RAGSystem()
 
 HF_TOKEN = os.getenv("HF_TOKEN")
-API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3"
+API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
 
 class Query(BaseModel):
     question: str
