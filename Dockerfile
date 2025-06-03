@@ -1,26 +1,23 @@
-FROM python:3.11-slim
+FROM python:3.12-slim
 
-# Set working directory
 WORKDIR /app
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    curl \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements and install Python dependencies
+# Copy requirements
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
-COPY . .
+COPY backend/ ./backend/
+COPY frontend/ ./frontend/
+COPY data/ ./data/
 
-# Expose ports
+# Expose ports for FastAPI and Streamlit
 EXPOSE 8000 8501
 
-# Copy startup script
-COPY start.sh .
-RUN chmod +x start.sh
-
-# Start both services
-CMD ["./start.sh"]
+# Run the ingestion script first, then start the backend
+CMD ["sh", "-c", "uvicorn backend.app:app --reload", "Streamlit run frontend/app.py --server.port 8501"]
