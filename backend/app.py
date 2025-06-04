@@ -6,6 +6,7 @@ from pydantic import BaseModel
 import requests
 import json
 import traceback
+import faiss
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -13,21 +14,22 @@ load_dotenv()
 class RAGSystem:
     def __init__(self):
         try:
-            model_name = os.getenv("SENTENCE_TRANSFORMERS", "all-MiniLM-L6-v2")
+            model_name = os.getenv("SENTENCE_TRANSFORMERS")
             print(f"Loading model: {model_name}")
             self.model = SentenceTransformer(model_name, cache_folder="/tmp/.cache/sentence_transformers")
             
             # Check if vector store exists
-            vector_store_path = "data/vector_store/uk_nhs_index.json"
-            if os.path.exists(vector_store_path):
-                with open(vector_store_path, "r") as f:
-                    data = json.load(f)
-                    self.vector_store = np.array(data["vectors"])
-                    self.metadata = data["metadata"]
-                print(f"Loaded {len(self.metadata)} documents from vector store")
+            index_path = "data/vector_store/uk_nhs_index.faiss"
+            metadata_path = "data/vector_store/uk_nhs_index_metadata.json"
+
+            if os.path.exists(index_path) and os.path.exists(metadata_path):
+                self.index = faiss.read_index(index_path)
+                with open(metadata_path, "r") as f:
+                    self.metadata = json.load(f)
+                print(f"Loaded FAISS index with {len(self.metadata)} documents.")
             else:
-                print("Warning: Vector store not found, creating empty store")
-                self.vector_store = np.array([])
+                print("Warning: FAISS index not found, creating empty index")
+                self.index = None
                 self.metadata = []
         except Exception as e:
             print(f"Error initializing RAG system: {e}")
@@ -35,14 +37,14 @@ class RAGSystem:
             raise
     
     def find_similar(self, query, k=2):
-        if len(self.vector_store) == 0:
+        if self.index is None or len(self.metadata) == 0:
+            print("No vector store available, returning empty results")
             return []
         
         try:
-            query = np.array(query).reshape(1, -1)
-            scores = np.dot(self.vector_store, query.T).flatten()
-            top_indices = np.argsort(scores)[-k:][::-1]
-            return [self.metadata[i] for i in top_indices if i < len(self.metadata)]
+            query = np.array(query).astype('float32').reshape(1, -1)
+            distances, indices = self.index.search(query, k)
+            return [self.metadata[i] for i in indices[0]]
         except Exception as e:
             print(f"Error in similarity search: {e}")
             return []
