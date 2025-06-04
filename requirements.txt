@@ -8,3 +8,4 @@ sentence_transformers==4.1.0
 streamlit==1.45.1
 uvicorn[standard]==0.24.0
 ctransformers
+faiss-cpu
